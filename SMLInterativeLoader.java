@@ -45,34 +45,7 @@ public class SMLInterativeLoader
             throw new IOException("File opening canceled");
         }
     }
-    
-    public int[] loadInstructions()
-    {
-        int[] memory = new int[100];
-        int index = 0;
         
-        try
-        {
-            while (scan.hasNext())
-            {
-                memory[index] = scan.nextInt();
-                index++;
-            }
-        }
-        catch (NoSuchElementException elementException)
-        {
-            System.err.println("File improperly formed.");
-            System.exit(1);
-        }
-        catch (IllegalStateException stateException)
-        {
-            System.err.println("Error reading from file.");
-            System.exit(1);
-        }
-        
-        return memory;
-    }
-    
     public void closeFile()
     {
         if (scan != null)
