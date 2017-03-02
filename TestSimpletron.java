@@ -1,9 +1,9 @@
 
 /**
- * Write a description of class TestSimpletron here.
+ * Simple test for Simpletron.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Carlos Reves 
+ * @version 1.0
  */
 public class TestSimpletron
 {
@@ -11,7 +11,12 @@ public class TestSimpletron
     {
         Simpletron computer = new Simpletron(100);
         SMLInterativeLoader loader = new SMLInterativeLoader();
-        computer.loadProgram(loader);
-        computer.runProgram();
+        
+        for (int i = 0; i < 2; i++)
+        {
+            System.out.printf("Program number %d.%n", i + 1);
+            computer.loadProgram(loader);
+            computer.runProgram();            
+        }
     }
 }
