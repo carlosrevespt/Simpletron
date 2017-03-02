@@ -3,7 +3,7 @@
  * Simpletron computer simulation
  * 
  * @author Carlos Revés 
- * @version 1.0
+ * @version 2.0
  */
 
 import java.io.IOException;
@@ -11,16 +11,26 @@ import java.util.InputMismatchException;
 
 public class Simpletron
 {
-    public static void main(String[] args)
+    private int[] memory;
+    private final int MEMORY_SIZE; 
+    
+    public Simpletron (int memorySize)
     {
+        MEMORY_SIZE = memorySize;
+        memory = new int[memorySize];
+    }
+    
+    private void clearMemory()
+    {
+        memory = new int[MEMORY_SIZE];
+    }
+    
+    public void loadProgram (SMLInterativeLoader loader) throws OutOfMemoryError
+    {
+        clearMemory();
         try
         {
-            SMLLoader loader = new SMLLoader();
             loader.openFile();
-            int[] memory = loader.loadInstructions();
-            loader.closeFile();
-            SMLProcessor processor = new SMLProcessor(memory);
-            processor.processSML();
         }
         catch (IOException ioException)
         {
@@ -32,5 +42,25 @@ public class Simpletron
             System.err.println(imException.getMessage());
             System.exit(1);
         }
+        int memoryLocation = 0;
+        
+        while (loader.hasNext())
+        {
+            if (memoryLocation == MEMORY_SIZE)
+            {
+                throw new OutOfMemoryError("Not enough memory to load program");
+            }
+            
+            memory[memoryLocation] = loader.nextInt(10);
+            memoryLocation++;
+        }
+        
+        loader.closeFile();
+    }
+    
+    public void runProgram ()
+    {
+        SMLProcessor processor = new SMLProcessor(memory);
+        processor.processSML();
     }
 }
