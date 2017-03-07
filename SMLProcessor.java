@@ -139,7 +139,7 @@ public class SMLProcessor
                     }
                     break;
                 case HALT:
-                    System.out.printf("%n*** Simpletron execution terminated ***\n");
+                    System.out.printf("%n*** Program execution terminated ***\n");
                     running = false;
                     break;
                 default:
