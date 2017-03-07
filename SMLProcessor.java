@@ -3,7 +3,7 @@
  * Simpletron Machine Language Simulation
  * 
  * @Carlos Revés 
- * @version 1.0
+ * @version 2.0
  */
 
 import java.util.Scanner;
@@ -11,7 +11,7 @@ import java.util.InputMismatchException;
 
 public class SMLProcessor
 {
-    private final int[] memory;
+    private final Simpletron computer;
     private int accumulator;
     private int instructionCounter;
     private int operationCode;
@@ -19,20 +19,23 @@ public class SMLProcessor
     private int instructionRegister;
     private final int READ = 10;
     private final int WRITE = 11;
+    private final int NEW_LINE = 12;
     private final int LOAD = 20;
     private final int STORE = 21;
     private final int ADD = 30;
     private final int SUBTRACT = 31;
     private final int DIVIDE = 32;
     private final int MULTIPLY = 33;
+    private final int REMAINDER = 34;
+    private final int POW = 35;
     private final int BRANCH = 40;
     private final int BRANCHNEG = 41;
     private final int BRANCHZERO = 42;
     private final int HALT = 43;
     
-    public SMLProcessor(int[] memory)
+    public SMLProcessor(Simpletron computer)
     {        
-        this.memory = memory;
+        this.computer = computer;
         accumulator = 0;
         instructionCounter = 0;
         operationCode = 0;
@@ -48,44 +51,56 @@ public class SMLProcessor
         
         while (running)
         {
-            instructionRegister = memory[instructionCounter];
+            instructionRegister = computer.getMemoryLocation(instructionCounter);
             operationCode = instructionRegister / 100;
             operand = instructionRegister % 100;
             switch(operationCode)
             {
                 case READ:
                     Scanner scan = new Scanner(System.in);
-                    System.out.print ("Enter an integer: ");
-                    memory[operand] = scan.nextInt();
+                    System.out.print("Enter an integer: ");
+                    computer.setMemoryLocation(operand, scan.nextInt());
                     instructionCounter++;
                     scan.close();
                     break;
                 case WRITE:
-                    System.out.printf ("%n%d", memory[operand]);
+                    System.out.printf("%n%d", computer.getMemoryLocation(operand));
+                    instructionCounter++;
+                    break;
+                case NEW_LINE:
+                    System.out.println();
                     instructionCounter++;
                     break;
                 case LOAD:
-                    accumulator = memory[operand];
+                    accumulator = computer.getMemoryLocation(operand);
                     instructionCounter++;
                     break;
                 case STORE:
-                    memory[operand] = accumulator;
+                    computer.setMemoryLocation(operand, accumulator);
                     instructionCounter++;
                     break;
                 case ADD:
-                    accumulator += memory[operand];
+                    accumulator += computer.getMemoryLocation(operand);
                     instructionCounter++;
                     break;
                 case SUBTRACT:
-                    accumulator -= memory[operand];
+                    accumulator -= computer.getMemoryLocation(operand);
                     instructionCounter++;
                     break;
                 case DIVIDE:
-                    accumulator /= memory[operand];
+                    accumulator /= computer.getMemoryLocation(operand);
                     instructionCounter++;
                     break;
                 case MULTIPLY:
-                    accumulator *= memory[operand];
+                    accumulator *= computer.getMemoryLocation(operand);
+                    instructionCounter++;
+                    break;
+                case REMAINDER:
+                    accumulator %= computer.getMemoryLocation(operand);
+                    instructionCounter++;
+                    break;
+                case POW:
+                    accumulator = (int)Math.pow(accumulator, computer.getMemoryLocation(operand));
                     instructionCounter++;
                     break;
                 case BRANCH:
@@ -112,7 +127,7 @@ public class SMLProcessor
                     }
                     break;
                 case HALT:
-                    System.out.printf ("%n*** Simpletron execution terminated ***\n");
+                    System.out.printf("%n*** Simpletron execution terminated ***\n");
                     running = false;
                     break;
                 default:
