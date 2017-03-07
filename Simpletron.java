@@ -12,17 +12,27 @@ import java.util.InputMismatchException;
 public class Simpletron
 {
     private int[] memory;
-    private final int MEMORY_SIZE; 
+    private final int memorySize; 
     
     public Simpletron (int memorySize)
     {
-        MEMORY_SIZE = memorySize;
+        this.memorySize = memorySize;
         memory = new int[memorySize];
     }
     
     private void clearMemory()
     {
-        memory = new int[MEMORY_SIZE];
+        memory = new int[memorySize];
+    }
+    
+    public int getMemoryLocation(int memoryLocation)
+    {
+        return memory[memoryLocation];
+    }
+    
+    public void setMemoryLocation(int memoryLocation, int instruction)
+    {
+        memory[memoryLocation] = instruction;
     }
     
     public void loadProgram (SMLInterativeLoader loader) throws OutOfMemoryError
@@ -46,7 +56,7 @@ public class Simpletron
         
         while (loader.hasNext())
         {
-            if (memoryLocation == MEMORY_SIZE)
+            if (memoryLocation == memorySize)
             {
                 throw new OutOfMemoryError("Not enough memory to load program");
             }
@@ -60,7 +70,7 @@ public class Simpletron
     
     public void runProgram ()
     {
-        SMLProcessor processor = new SMLProcessor(memory);
+        SMLProcessor processor = new SMLProcessor(this);
         processor.processSML();
     }
 }

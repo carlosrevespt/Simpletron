@@ -56,11 +56,20 @@ public class SMLInterativeLoader
     
     public boolean hasNext()
     {
+        if (scan == null)
+        {
+            throw new NullPointerException();
+        }
         return scan.hasNext();
     }
     
     public int nextInt(int radix)
     {
-        return scan.nextInt(radix);
+        if (scan == null)
+        {
+            throw new NullPointerException();
+        }
+        
+        return scan.nextInt(radix);        
     }
 }
