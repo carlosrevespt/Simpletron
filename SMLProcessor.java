@@ -1,8 +1,9 @@
+
 /**
  * Simpletron Machine Language Simulation
  * 
  * @Carlos Revés 
- * @version 1.0
+ * @version 3.0
  */
 
 import java.util.Scanner;
@@ -10,28 +11,33 @@ import java.util.InputMismatchException;
 
 public class SMLProcessor
 {
-    private final int[] memory;
+    private final Simpletron computer;
     private int accumulator;
     private int instructionCounter;
     private int operationCode;
-    private int operand = 0;
+    private int operand;
     private int instructionRegister;
-    private final int READ = 10;
-    private final int WRITE = 11;
-    private final int LOAD = 20;
-    private final int STORE = 21;
-    private final int ADD = 30;
-    private final int SUBTRACT = 31;
-    private final int DIVIDE = 32;
-    private final int MULTIPLY = 33;
-    private final int BRANCH = 40;
-    private final int BRANCHNEG = 41;
-    private final int BRANCHZERO = 42;
-    private final int HALT = 43;
+    private final int READ = 0x10;
+    private final int WRITE = 0x11;
+    private final int NEW_LINE = 0x12;
+    private final int READ_STRING = 0x13;
+    private final int WRITE_STRING = 0x14;
+    private final int LOAD = 0x20;
+    private final int STORE = 0x21;
+    private final int ADD = 0x30;
+    private final int SUBTRACT = 0x31;
+    private final int DIVIDE = 0x32;
+    private final int MULTIPLY = 0x33;
+    private final int REMAINDER = 0x34;
+    private final int POW = 0x35;
+    private final int BRANCH = 0x40;
+    private final int BRANCHNEG = 0x41;
+    private final int BRANCHZERO = 0x42;
+    private final int HALT = 0x43;
     
-    public SMLProcessor(int[] memory)
+    public SMLProcessor(Simpletron computer)
     {        
-        this.memory = memory;
+        this.computer = computer;
         accumulator = 0;
         instructionCounter = 0;
         operationCode = 0;
@@ -47,44 +53,66 @@ public class SMLProcessor
         
         while (running)
         {
-            instructionRegister = memory[instructionCounter];
-            operationCode = instructionRegister / 100;
-            operand = instructionRegister % 100;
+            instructionRegister = computer.getMemoryLocation(instructionCounter);
+            operationCode = instructionRegister >> 8;
+            operand = instructionRegister & 0xff;
+            Scanner scan = new Scanner(System.in);
             switch(operationCode)
             {
-                case READ:
-                    Scanner scan = new Scanner(System.in);
+                case READ:                    
                     System.out.print("Enter an integer: ");
-                    memory[operand] = scan.nextInt();
+                    computer.setMemoryLocation(operand, scan.nextInt());
+                    //scan.next();
                     instructionCounter++;
-                    scan.close();
                     break;
                 case WRITE:
-                    System.out.printf("%n%d", memory[operand]);
+                    System.out.printf("%n%d", computer.getMemoryLocation(operand));
+                    instructionCounter++;
+                    break;
+                case NEW_LINE:
+                    System.out.printf("%n");
+                    instructionCounter++;
+                    break;
+                case READ_STRING:
+                    System.out.print("Enter the String: ");
+                    String inputString = scan.nextLine();
+                    storeString(inputString);
+                    instructionCounter++;
+                    break;
+                case WRITE_STRING:
+                    System.out.printf("%s", getString());
                     instructionCounter++;
                     break;
                 case LOAD:
-                    accumulator = memory[operand];
+                    accumulator = computer.getMemoryLocation(operand);
                     instructionCounter++;
                     break;
                 case STORE:
-                    memory[operand] = accumulator;
+                    computer.setMemoryLocation(operand, accumulator);
                     instructionCounter++;
                     break;
                 case ADD:
-                    accumulator += memory[operand];
+                    accumulator += computer.getMemoryLocation(operand);
                     instructionCounter++;
                     break;
                 case SUBTRACT:
-                    accumulator -= memory[operand];
+                    accumulator -= computer.getMemoryLocation(operand);
                     instructionCounter++;
                     break;
                 case DIVIDE:
-                    accumulator /= memory[operand];
+                    accumulator /= computer.getMemoryLocation(operand);
                     instructionCounter++;
                     break;
                 case MULTIPLY:
-                    accumulator *= memory[operand];
+                    accumulator *= computer.getMemoryLocation(operand);
+                    instructionCounter++;
+                    break;
+                case REMAINDER:
+                    accumulator %= computer.getMemoryLocation(operand);
+                    instructionCounter++;
+                    break;
+                case POW:
+                    accumulator = (int)Math.pow(accumulator, computer.getMemoryLocation(operand));
                     instructionCounter++;
                     break;
                 case BRANCH:
@@ -118,10 +146,51 @@ public class SMLProcessor
                     throw new InputMismatchException("Invalid code");
             }
             
-            if (accumulator < -9999 || accumulator > 9999)
+            if (accumulator < -0xffff || accumulator > 0xffff)
             {
                 throw new RuntimeException("Accumulator overflow");
             }
+        }        
+    }
+    
+    private void storeString(String inputString)
+    {
+        int stringLength = inputString.length();
+        accumulator = stringLength << 8;
+        accumulator += inputString.charAt(0);
+        computer.setMemoryLocation(operand, accumulator);
+        operand++;
+        
+        for (int index = 1; index < stringLength; index += 2)
+        {
+            accumulator = inputString.charAt(index) << 8;
+            if (index + 1 < stringLength)
+            {
+                accumulator += inputString.charAt(index + 1);
+            }
+            computer.setMemoryLocation(operand, accumulator);
+            operand++;
         }
+    }
+    
+    private String getString()
+    {
+        int stringLength = computer.getMemoryLocation(operand) >> 8;
+        StringBuilder buffer = new StringBuilder(41);
+        
+        for (int index = 0; index < stringLength; index++)
+        {
+            if (index % 2 == 0)
+            {
+                buffer.append((char)(computer.getMemoryLocation(operand) & 0xff));
+                operand++;
+            }
+            else
+            {
+                buffer.append((char)(computer.getMemoryLocation(operand) >> 8));
+            }
+        }
+        
+        return buffer.toString();
     }
 }
