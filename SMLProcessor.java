@@ -150,7 +150,9 @@ public class SMLProcessor
             {
                 throw new RuntimeException("Accumulator overflow");
             }
-        }        
+        }   
+        
+        printDump();
     }
     
     private void storeString(String inputString)
@@ -192,5 +194,34 @@ public class SMLProcessor
         }
         
         return buffer.toString();
+    }
+    
+    private void printDump()
+    {
+        System.out.printf ("%nREGISTERS:%n");
+        System.out.printf ("%-21s 0x%-5s%n", "accumulator", Integer.toHexString(accumulator));
+        System.out.printf ("%-21s 0x%-2s%n", "instructionCounter", Integer.toHexString(instructionCounter));
+        System.out.printf ("%-21s 0x%-5s%n", "instructionRegister", Integer.toHexString(instructionRegister));
+        System.out.printf ("%-21s 0x%-2s%n", "operationCode", Integer.toHexString(operationCode));
+        System.out.printf ("%-21s 0x%-2s%n", "operand", Integer.toHexString(operand));
+        System.out.printf("%nMEMORY:%n     ");
+        
+        for (int i = 0; i < 16; i++)
+        {
+            System.out.printf ("%6s", Integer.toHexString(i));
+        }
+        
+        for (int i = 0; i < computer.getMemoryCapacity(); i++)
+        {
+            if (i % 16 == 0)
+            {
+                System.out.printf("%n0x%-3s ", Integer.toHexString(i >> 4));
+            }
+            
+            int memoryValue = computer.getMemoryLocation(i);
+            System.out.printf("%5s ", Integer.toHexString(memoryValue));
+        }
+        
+        System.out.printf("%n");
     }
 }

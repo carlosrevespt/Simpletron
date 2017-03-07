@@ -3,7 +3,7 @@
  * Simpletron computer simulation
  * 
  * @author Carlos Revés 
- * @version 2.0
+ * @version 3.0
  */
 
 import java.io.IOException;
@@ -33,6 +33,11 @@ public class Simpletron
     public void setMemoryLocation(int memoryLocation, int instruction)
     {
         memory[memoryLocation] = instruction;
+    }
+    
+    public int getMemoryCapacity()
+    {
+        return memory.length;
     }
     
     public void loadProgram (SMLInterativeLoader loader) throws OutOfMemoryError
