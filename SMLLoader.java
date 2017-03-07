@@ -1,8 +1,7 @@
-
 /**
  * Loader for SML Instructions
  * 
- * @author Carlos RevÃ©s
+ * @author Carlos Revés
  * @version 1.0
  */
 
