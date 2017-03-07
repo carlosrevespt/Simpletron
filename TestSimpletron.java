@@ -12,7 +12,7 @@ public class TestSimpletron
         Simpletron computer = new Simpletron(200);
         SMLInterativeLoader loader = new SMLInterativeLoader();
         
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 2; i++)
         {
             System.out.printf("Program number %d.%n", i + 1);
             computer.loadProgram(loader);
