@@ -2,7 +2,7 @@
 
 Learning project to build my own Machine Language, Computer Simulation and Compiler for a BASIC-style high level language called *Simple*.
 
-*Added in version 3:*
+**_Added in version 3:_**
 
 * Remainder calculations;
 * Exponentiation calculations;
@@ -10,6 +10,6 @@ Learning project to build my own Machine Language, Computer Simulation and Compi
 * SML instructions in Hexadecimal format;
 * input and output of Strings.
 
-Yet to do:
+**_Yet to do:_**
 
 * Floating-point support (in addition to integer).
