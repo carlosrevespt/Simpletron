@@ -58,7 +58,7 @@ public class SMLInterativeLoader
     {
         if (scan == null)
         {
-            throw new NullPointerException();
+            throw new IllegalStateException("File not open");
         }
         return scan.hasNext();
     }
@@ -67,7 +67,7 @@ public class SMLInterativeLoader
     {
         if (scan == null)
         {
-            throw new NullPointerException();
+            throw new IllegalStateException("File not open");
         }
         
         return scan.nextInt(radix);        
