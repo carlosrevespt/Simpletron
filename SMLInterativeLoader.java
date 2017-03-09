@@ -3,7 +3,7 @@
  * Loader for SML Instructions
  * 
  * @author Carlos Revés
- * @version 2.0
+ * @version 3.0
  */
 
 import java.io.File;
